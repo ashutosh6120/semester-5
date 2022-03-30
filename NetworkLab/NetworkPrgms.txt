@@ -1,0 +1,988 @@
+1)  CRC-CTT  prgm
+
+
+import java.util.Scanner;
+import java.io.*;
+public class CRC_CTT {
+
+    public static void main(String args[]) {
+
+    Scanner sc = new Scanner(System.in);
+
+    //Input Data Stream
+    System.out.print("Enter message bits: ");
+    String message = sc.nextLine();
+    System.out.print("Enter generator: ");
+    String generator = sc.nextLine();
+int data[] = new int[message.length() + generator.length() - 1];
+int divisor[] = new int[generator.length()];
+for(int i=0;i<message.length();i++)
+	data[i] = Integer.parseInt(message.charAt(i)+"");
+for(int i=0;i<generator.length();i++)
+	divisor[i] = Integer.parseInt(generator.charAt(i)+"");
+
+//Calculation of CRC
+for(int i=0;i<message.length();i++)
+{
+	if(data[i]==1)
+		for(int j=0;j<divisor.length;j++)
+			data[i+j] ^= divisor[j];
+}
+
+//Display CRC
+System.out.print("The checksum code is: ");
+for(int i=0;i<message.length();i++)
+	data[i] = Integer.parseInt(message.charAt(i)+"");
+for(int i=0;i<data.length;i++) 
+    System.out.print(data[i]);
+System.out.println();
+
+//Check for input CRC code
+System.out.print("Enter checksum code: ");
+	message = sc.nextLine();
+System.out.print("Enter generator: ");
+	generator = sc.nextLine();
+data = new int[message.length() + generator.length() - 1];
+divisor = new int[generator.length()];
+for(int i=0;i<message.length();i++)
+	data[i] = Integer.parseInt(message.charAt(i)+"");
+for(int i=0;i<generator.length();i++)
+	divisor[i] = Integer.parseInt(generator.charAt(i)+"");
+
+//Calculation of remainder
+for(int i=0;i<message.length();i++) {
+	if(data[i]==1)
+		for(int j=0;j<divisor.length;j++)
+			data[i+j] ^= divisor[j];
+}
+
+//Display validity of data
+boolean valid = true;
+for(int i=0;i<data.length;i++)
+	if(data[i]==1){
+		valid = false;
+		break;
+}
+
+if(valid==true) 
+	System.out.println("Data stream is valid");
+else 
+	System.out.println("Data stream is invalid. CRC error occurred.");
+}
+
+}
+
+
+Output::
+
+Enter message bits: 1101011011
+Enter generator: 10011
+The checksum code is: 11010110111110
+Enter checksum code: 11010110111110
+Enter generator: 10011
+Data stream is valid
+
+
+Enter message bits: 1101011011
+Enter generator: 10011
+The checksum code is: 11010110111110
+Enter checksum code: 11010110110110
+Enter generator: 10011
+Data stream is invalid. CRC error occurred.
+
+
+
+
+
+
+
+============================================================================================================================
+
+
+
+2)  Bellman Ford
+
+import java.util.Scanner;
+class node {
+	public node(long dist, long parent) {
+		this.dist = dist;
+		this.parent = parent;
+	}
+	public long dist;
+	public long parent;
+}
+
+public class BellmanFord {
+	public static void main(String[] args) {
+		long n;
+		long[][] dist;
+		node[][] routing_tables;
+		Scanner s = new Scanner(System.in);
+		System.out.print("enter no of nodes in network: ");
+		n = s.nextLong();
+		dist = new long[(int)n][(int)n];
+		routing_tables = new node[(int)n][(int)n];
+		System.out.println("enter the distance matrix(-1 for infinity): ");
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<n;j++) {
+				routing_tables[i][j] = new node(Integer.MAX_VALUE,-1);
+				dist[i][j] = s.nextLong();
+				if(dist[i][j]==-1)
+					dist[i][j]=Integer.MAX_VALUE;
+			}
+		}
+		
+		for(int i=0;i<n;i++) {
+			routing_tables[i][i].dist=0;
+			routing_tables[i][i].parent=i;
+		}
+		
+		for (int k = 0; k < n; k++) {
+			for (int u = 0; u < n; u++) {
+				for (int v = 0; v < n; v++) {
+					for (int i = 0; i < n; i++) {
+						if (dist[v][u] != Integer.MAX_VALUE && 
+								routing_tables[i][v].dist != Integer.MAX_VALUE &&
+								routing_tables[i][u].dist > routing_tables[i][v].dist + dist[v][u]) {
+							routing_tables[i][u].dist = routing_tables[i][v].dist + dist[v][u];
+							routing_tables[i][u].parent = v;
+						}
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			System.out.println("Routing table of for router " + (i + 1));
+			System.out.println("Dest\tDist\tParent");
+			System.out.println("----\t----\t------");
+			for (int j = 0; j < n; j++) {
+				System.out.println((j+1) + "\t" + routing_tables[i][j].dist + "\t" + (routing_tables[i][j].parent + 1));
+			}
+			System.out.println("\n");
+		}
+	
+		s.close();		
+	}
+}
+
+
+
+
+Output::
+
+enter no of nodes in network: 5
+enter the distance matrix(-1 for infinity): 
+0 1 4 -1 -1
+1 0 -1 1 7
+4 -1 0 1 -1
+-1 1 1 0 -1
+-1 7 -1 -1 0
+Routing table of for router 1
+Dest	Dist	Parent
+----	----	------
+1	0	1
+2	1	1
+3	3	4
+4	2	2
+5	8	2
+
+
+Routing table of for router 2
+Dest	Dist	Parent
+----	----	------
+1	1	2
+2	0	2
+3	2	4
+4	1	2
+5	7	2
+
+
+Routing table of for router 3
+Dest	Dist	Parent
+----	----	------
+1	3	2
+2	2	4
+3	0	3
+4	1	3
+5	9	2
+
+
+Routing table of for router 4
+Dest	Dist	Parent
+----	----	------
+1	2	2
+2	1	4
+3	1	4
+4	0	4
+5	8	2
+
+
+Routing table of for router 5
+Dest	Dist	Parent
+----	----	------
+1	8	2
+2	7	5
+3	9	4
+4	8	2
+5	0	5
+
+
+
+
+
+
+
+
+
+
+
+
+============================================================================================================================
+
+
+3)  TCP/IP 
+
+
+Tcp Server 
+
+
+import java.util.*;
+import java.net.*;
+import java.io.*;
+public class Tcpserver {
+	public static void main(String[] args){
+		try {
+			ServerSocket s=new ServerSocket(1414);
+            System.out.println("Server Ready\nwaiting for connection .....");
+            Socket s1=s.accept();
+            DataOutputStream dos= new DataOutputStream(s1.getOutputStream());
+            DataInputStream dis= new DataInputStream(s1.getInputStream());
+            System.out.println(dis.readUTF());
+            String path= dis.readUTF();
+            System.out.println("Request Recieved");
+            try{
+                File myFile= new File(path);
+                Scanner scn=new Scanner(myFile);
+               	String st=scn.nextLine();
+                st="The contents of the file is"+st;
+                while(scn.hasNextLine()){
+                	st=st+"\n"+scn.nextLine();
+                }
+				dos.writeUTF(st);
+				dos.close();
+				s1.close();
+                s.close();
+                scn.close();
+			}
+			catch(FileNotFoundException e){
+				System.out.println("ERROR! FILE NOT FOUND");
+				dos.writeUTF("ERROR! FILE NOT FOUND");
+			}
+		}
+		catch(IOException e) {
+			System.out.println("IO: " + e.getMessage());
+		}
+		finally {
+			System.out.println("Connection terminated");
+		}
+	}
+}
+
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+Tcp Client
+
+
+//cliient-side java program
+
+import java.util.*;
+import java.net.*;
+import java.io.*;
+
+
+public class Tcpclient {
+	public static void main(String[] args) {
+		try {
+			Scanner scn = new Scanner(System.in);
+			Socket s = new Socket("10.24.30.7",1414);
+			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+			DataInputStream dis=new DataInputStream(s.getInputStream());
+            dos.writeUTF("connected to 192.168.0.166 \n");
+            System.out.println("\n Enter the full path of file to be displayed\n");
+            String path=scn.nextLine();
+            dos.writeUTF(path);
+            System.out.println(new String(dis.readUTF()));
+            dis.close();
+            dos.close();
+            s.close();
+            scn.close();
+        }
+        catch(IOException e){
+        	System.out.println("IO: " + e.getMessage());
+        }	
+	}
+}
+
+
+
+Output:: 
+
+Server Ready
+waiting for connection .....
+connected to 192.168.0.166
+
+Request Recieved
+Connection terminated
+
+
+client-side output
+
+Enter  the full path of file to be displayed
+file.txt 
+
+Tcp client some random words in the above file.txt  file.
+
+
+
+
+2nd case 
+
+Server Ready
+waiting for connection .....
+connected to 192.168.0.166
+
+Request Recieved
+ERROR! FILE NOT FOUND
+Connection terminated
+
+client-side output
+
+Enter  the full path of file to be displayed
+ERROR! FILE NOT FOUND
+
+============================================================================================================================
+
+
+4)  UDP
+
+
+Udp server 
+
+
+
+import java.util.*;
+import java.net.*;
+import java.io.*;
+public class Udpserver {
+	public static void main(String[] args) {
+		DatagramSocket aSocket = null;
+		Scanner scan = new Scanner(System.in);
+		int Serverport = 7561;
+		System.out.println("Server ready\n waiting for connection\n");
+		try {
+			aSocket = new DatagramSocket(Serverport);
+			byte[] buffer = new byte[1000];
+			byte[] buff = new byte[1000];
+			DatagramPacket data1 = new DatagramPacket(buff,buff.length);
+			aSocket.receive(data1);
+			byte[] msg = new byte[1000];
+			msg = data1.getData();
+			System.out.println(new String(msg,0,data1.getLength()));
+			System.out.println("\n Enter message to be sent: ");
+			String str = scan.nextLine();
+			buffer = str.getBytes();
+			DatagramPacket data = new DatagramPacket(buffer,buffer.length,InetAddress.getLocalHost(),7560);
+			aSocket.send(data);
+		}
+		catch(SocketException e) {
+			System.out.println("socket" + e.getMessage());
+		}
+		catch(IOException o) {
+			System.out.println("IO: " + o.getMessage());
+		}
+		finally{
+			System.out.println("\n Message sent\n Connection terminated\n");
+			if(aSocket!=null)
+				aSocket.close();
+			scan.close();
+		}
+	}
+}
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+Udp Client
+
+
+import java.net.*;
+import java.io.*;
+public class Udpclient {
+	public static void main(String[] args) {
+		DatagramSocket aSocket=null;
+        int clientPort=7560;
+		try {
+            aSocket=new DatagramSocket(clientPort);
+            byte[] buf=new byte[1000];
+            byte[] buf1=new byte[1000];
+            DatagramPacket data=new DatagramPacket(buf,buf.length);
+            String conf="connected to client";
+            buf1=conf.getBytes();
+            DatagramPacket data1=new DatagramPacket(buf1,buf1.length,InetAddress.getLocalHost(),7561);
+            aSocket.send(data1);
+            System.out.println("connected to server");
+            aSocket.receive(data);
+            byte[] msg=new byte[1000];
+            msg=data.getData();
+            System.out.println("\n message:");
+            System.out.println(new String(msg,0,data.getLength()));
+        }
+        catch(SocketException e){
+			System.out.println("Socket:"+e.getMessage());
+		}
+
+        catch(IOException e){
+             System.out.println("IO:"+e.getMessage());
+        }
+        finally{
+             if(aSocket!=null)
+             	aSocket.close();
+       }
+	}
+}
+
+
+Output::
+
+Server ready
+ waiting for connection
+
+connected to client
+
+ Enter message to be sent: 
+Helloo
+
+ Message sent
+ Connection terminated
+
+
+client-side
+connected to server
+
+ message:
+Helloo
+
+
+
+============================================================================================================================
+
+
+5)  RSA  encrpytion and decryption 
+
+
+import java.util.*;
+import java.io.*;
+
+public class Rsa
+{
+   static int gcd(int m,int n)
+   {
+      while(n!=0)
+      {
+         int r=m%n;
+             m=n;
+             n=r;
+      }
+      return m;
+   }
+
+   public static void main(String args[])
+   {
+      int p=0,q=0,n=0,e=0,d=0,phi=0;
+      int nummes[]=new int[100];
+      int encrypted[]=new int[100];
+      int decrypted[]=new int[100];
+      int i=0,j=0,nofelem=0;
+      Scanner sc=new Scanner(System.in);
+      String message;
+      System.out.println("enter the message to be encrypted : ");
+      message=sc.nextLine();
+      System.out.println("Enter the value of p and q \n");
+      p=sc.nextInt();
+      q=sc.nextInt();
+      n=p*q;
+      phi=(p-1)*(q-1);
+      for(i=2;i<phi;i++)
+          if(gcd(i,phi)==1) break;
+        e=i;
+      for(i=2;i<phi;i++)
+          if((e*i-1)%phi==0)
+             break;
+        d=i;
+      for(i=0;i<message.length();i++)
+      {
+          char c = message.charAt(i);
+          int a =(int)c;
+          nummes[i]=c-96;
+      }
+      nofelem=message.length();
+      for(i=0;i<nofelem;i++)
+      {
+          encrypted[i]=1;
+          for(j=0;j<e;j++)
+              encrypted[i] =(encrypted[i]*nummes[i])%n;
+      }
+      System.out.println("\n Encrypted message\n");
+      for(i=0;i<nofelem;i++)
+      {
+          System.out.print(encrypted[i]);
+          System.out.print((char)(encrypted[i]+96));
+      }
+      for(i=0;i<nofelem;i++)
+      {
+          decrypted[i]=1;
+          for(j=0;j<d;j++)
+              decrypted[i]=(decrypted[i]*encrypted[i])%n;
+      }
+      System.out.println("\n Decrypted message\n ");
+      for(i=0;i<nofelem;i++)
+          System.out.print((char)(decrypted[i]+96));
+      return;
+   }
+}
+
+
+Output::
+
+enter the message to be encrypted : 
+good morning
+Enter the value of p and q 
+
+5
+97
+
+ Encrypted message
+
+317Ɲ350ƾ350ƾ54-324＜268Ŭ350ƾ8h444Ȝ364ǌ444Ȝ317Ɲ
+ Decrypted message
+ 
+good morning
+
+
+
+enter the message to be encrypted : 
+123
+Enter the value of p and q 
+
+7
+101
+
+ Encrypted message
+
+-670ﷂ-613ﷻ-171ﾵ
+ Decrypted message
+ 
+123
+
+
+
+
+
+============================================================================================================================
+
+
+
+6)   Leaky Bucket Congestion Control
+
+
+import java.util.Scanner;
+public class Leak {
+	public static void main(String[] args) {
+		Scanner s = new Scanner(System.in);
+		
+		int bucket_size, input_rate, output_rate, time_steps, current_size = 0;
+
+		System.out.print("Enter bucket size: ");
+		bucket_size = s.nextInt();		
+
+		System.out.print("Enter input rate: ");
+		input_rate =  s.nextInt();		
+
+		System.out.print("Enter output rate: ");
+		output_rate = s.nextInt();		
+
+		System.out.print("Enter time steps to simulate: ");
+		time_steps = s.nextInt();		
+
+		// Simulation starts
+		for (int i = 0; i < time_steps; i++) {
+			int space_left = bucket_size - current_size;
+			int loss = 0;
+			if (input_rate <= space_left) {
+				current_size += input_rate;
+			} else {
+				loss = input_rate - space_left;
+				current_size = bucket_size;
+			}
+			current_size -= output_rate;
+			System.out.println("Time = " + i + "s | Bucket/Buffer status: " + current_size + "/" + bucket_size + ", Packet loss = " + loss);
+		}
+		
+		s.close();
+	}
+}
+
+
+
+
+Output::
+
+
+Enter bucket size: 10
+Enter input rate: 5
+Enter output rate: 1
+Enter time steps to simulate: 10
+Time = 0s | Bucket/Buffer status: 4/10, Packet loss = 0
+Time = 1s | Bucket/Buffer status: 8/10, Packet loss = 0
+Time = 2s | Bucket/Buffer status: 9/10, Packet loss = 3
+Time = 3s | Bucket/Buffer status: 9/10, Packet loss = 4
+Time = 4s | Bucket/Buffer status: 9/10, Packet loss = 4
+Time = 5s | Bucket/Buffer status: 9/10, Packet loss = 4
+Time = 6s | Bucket/Buffer status: 9/10, Packet loss = 4
+Time = 7s | Bucket/Buffer status: 9/10, Packet loss = 4
+Time = 8s | Bucket/Buffer status: 9/10, Packet loss = 4
+Time = 9s | Bucket/Buffer status: 9/10, Packet loss = 4
+
+
+
+
+
+
+Enter bucket size: 4
+Enter input rate: 3
+Enter output rate: 2
+Enter time steps to simulate: 6
+Time = 0s | Bucket/Buffer status: 1/4, Packet loss = 0
+Time = 1s | Bucket/Buffer status: 2/4, Packet loss = 0
+Time = 2s | Bucket/Buffer status: 2/4, Packet loss = 1
+Time = 3s | Bucket/Buffer status: 2/4, Packet loss = 1
+Time = 4s | Bucket/Buffer status: 2/4, Packet loss = 1
+Time = 5s | Bucket/Buffer status: 2/4, Packet loss = 1
+
+
+
+
+
+
+
+============================================================================================================================
+
+
+
+NS2 Programs
+
+1)  IMplement three nodes point to pioint network with duplex links between them. set the queue size, vary bandwidth
+	and find the number of packets.
+
+
+set ns [new Simulator]
+set tf [open lab1.tr w]
+$ns trace-all $tf
+set nf [open lab1.nam w]
+$ns namtrace-all $nf
+
+#Create 3 nodes
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+
+$ns color 1 Blue
+$ns color 2 Red
+$n0 label "Source/udp0"
+$n1 label "Source/udp1"
+$n2 label "Router"
+$n3 label "Destination/Null"
+
+#Create links between the nodes
+$ns duplex-link $n0 $n2 10Mb 300ms DropTail
+$ns duplex-link $n1 $n2 10Mb 300ms DropTail
+$ns duplex-link $n2 $n3 1Mb 300ms DropTail
+
+#Set Queue Size  
+$ns queue-limit $n0 $n2 10
+$ns queue-limit $n1 $n2 10
+$ns queue-limit $n2 $n3 5
+
+#Attach UDP agent to nodes
+set udp0 [new Agent/UDP]
+$ns attach-agent $n0 $udp0
+set cbr0 [new Application/Traffic/CBR]
+$cbr0 attach-agent $udp0 
+set null [new Agent/Null]
+$ns attach-agent $n3 $null 
+set udp1 [new Agent/UDP]
+$ns attach-agent $n1 $udp1
+set cbr1 [new Application/Traffic/CBR]
+$cbr1 attach-agent $udp1
+
+$udp0 set class_ 1
+$udp1 set class_ 2
+
+$ns connect $udp0 $null
+$ns connect $udp1 $null
+
+$cbr1 set packetSize_ 500Mb
+$cbr1 set interval_ 0.005
+
+proc finish {} {
+    global ns nf tf
+    $ns flush-trace
+    
+    close $nf
+    close $tf
+    
+    exec nam lab1.nam &
+    exit 0
+}
+
+$ns at 0.1 "$cbr0 start"
+$ns at 0.1 "$cbr1 start"
+$ns at 10.0 "finish"
+$ns run
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+awk file 
+
+
+BEGIN{
+#include<stdio.h>
+count=0;
+}
+{
+if($1=="d")
+#d stands for the packets drops.
+count++
+} END{
+printf("The Total no of Packets Dropped due to Congestion :%d\n\n", count)
+}
+
+
+
+
+Output:; 
+The total no of packets dropped due to congestion: 456
+
+
+
+==========================================================================================================================================
+
+
+
+2)  Implemnet transmission of ping messages/trace route over a network topology consisting of 6 nodes
+	find no of packets dropped due to congestion.
+
+
+set ns [new Simulator]
+set nf [open lab2.nam w]
+$ns namtrace-all $nf
+set nd [open lab2.tr w]
+$ns trace-all $nd
+proc finish {} {
+global ns nf nd
+$ns flush-trace
+close $nf
+close $nd
+exec nam lab2.nam &
+exit 0
+}
+
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+set n4 [$ns node]
+set n5 [$ns node]
+set n6 [$ns node]
+$ns duplex-link $n1 $n0 1Mb 10ms DropTail
+$ns duplex-link $n2 $n0 1Mb 10ms DropTail
+$ns duplex-link $n3 $n0 1Mb 10ms DropTail
+$ns duplex-link $n4 $n0 1Mb 10ms DropTail
+$ns duplex-link $n5 $n0 1Mb 10ms DropTail
+$ns duplex-link $n6 $n0 1Mb 10ms DropTail
+Agent/Ping instproc recv {from rtt} {
+$self instvar node_
+puts "node [$node_ id] recieved ping answer from \
+$from with round-trip-time $rtt ms."
+}
+set p1 [new Agent/Ping]
+set p2 [new Agent/Ping]
+set p3 [new Agent/Ping]
+set p4 [new Agent/Ping]
+set p5 [new Agent/Ping]
+set p6 [new Agent/Ping]
+$ns attach-agent $n1 $p1
+$ns attach-agent $n2 $p2
+$ns attach-agent $n3 $p3
+$ns attach-agent $n4 $p4
+$ns attach-agent $n5 $p5
+$ns attach-agent $n6 $p6
+
+$ns queue-limit $n0 $n4 3
+$ns queue-limit $n0 $n5 2
+$ns queue-limit $n0 $n6 2
+$ns connect $p1 $p4
+$ns connect $p2 $p5
+$ns connect $p3 $p6
+$ns at 0.2 "$p1 send"
+$ns at 0.4 "$p2 send"
+$ns at 0.6 "$p3 send"
+$ns at 1.0 "$p4 send"
+$ns at 1.2 "$p5 send"
+$ns at 1.4 "$p6 send"
+$ns at 2.0 "finish"
+$ns run
+
+
+
+--------------------------------------------------------------------------------------------------------
+
+awk file
+
+
+BEGIN {
+count=0;
+}
+{
+event=$1;
+if(event=="d")
+{
+count++;
+}
+}
+END {
+printf("No of packets dropped : %d\n",count);
+}
+
+
+Output::
+The total No of packets dropped: 6
+
+
+===============================================================================================================================
+
+
+
+3)  IMplement an ethernet LAN using nodes and set multiple traffic nodes and plot congestion window for 
+	different source/destination.
+
+
+set ns [new Simulator] 
+set nf [open lab3.nam w]
+$ns namtrace-all $nf 
+set nd [open lab3.tr w]
+$ns trace-all $nd
+$ns color 1 Blue
+$ns color 2 Red 
+proc finish {} { 
+global ns nf nd
+$ns flush-trace 
+close $nf 
+close $nd
+exec nam lab3.nam & 
+exit 0
+}
+set n0 [$ns node] 
+set n1 [$ns node] 
+set n2 [$ns node] 
+set n3 [$ns node] 
+set n4 [$ns node] 
+set n5 [$ns node] 
+set n6 [$ns node] 
+set n7 [$ns node] 
+set n8 [$ns node]
+$n7 shape box
+$n7 color Blue
+$n8 shape hexagon
+$n8 color Red
+$ns duplex-link $n1 $n0 2Mb 10ms DropTail
+$ns duplex-link $n2 $n0 2Mb 10ms DropTail
+$ns duplex-link $n0 $n3 1Mb 20ms DropTail
+$ns make-lan "$n3 $n4 $n5 $n6 $n7 $n8" 1Mb 40ms LL Queue/DropTail Mac/802_3
+$ns duplex-link-op $n1 $n0 orient right-down
+$ns duplex-link-op $n2 $n0 orient right-up
+$ns duplex-link-op $n0 $n3 orient right
+$ns queue-limit $n0 $n3 20
+set tcp1 [new Agent/TCP]
+$ns attach-agent $n1 $tcp1
+set tcp2 [new Agent/TCP]
+$ns attach-agent $n2 $tcp2
+set sink1 [new Agent/TCPSink]
+$ns attach-agent $n7 $sink1
+set sink2 [new Agent/TCPSink]
+$ns attach-agent $n8 $sink2
+$ns connect $tcp1 $sink1 
+$ns connect $tcp2 $sink2 
+$tcp1 set class_ 1
+$tcp1 set packetSize_ 55
+set ftp1 [new Application/FTP]
+$ftp1 attach-agent $tcp1
+$ftp1 set packetSize_ 55
+$ftp1 set interval_ 0.0001
+set ftp2 [new Application/FTP]
+$ftp2 set packetSize_ 55
+$ftp2 set interval_ 0.0001
+$ftp2 attach-agent $tcp2
+set tfile1 [open cwnd1.tr w]
+set tfile2 [open cwnd2.tr w]
+$tcp1 attach $tfile1
+$tcp1 trace cwnd_
+$tcp2 attach $tfile2
+$tcp2 trace cwnd_
+$ns at 0.5 "$ftp1 start"
+$ns at 1.0 "$ftp2 start"
+$ns at 8.0 "$ftp2 stop"
+$ns at 8.0 "$ftp1 stop"
+$ns at 8.5 "finish"
+$ns run
+
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+awk file 
+
+BEGIN {
+}
+{
+if($6=="cwnd_")
+{
+printf("%f\t%f\n",$1,$7);
+}
+}
+END {
+}
+
+
+----------------------------------------------------------
+run tcl file: ns filename.tcl 
+
+Run awk file:  awk -f program1.awk  lab1.tr
+
+Run graph:
+
+awk -f 3.awk cwnd1.tr > tcp1
+awk -f 3.awk cwnd2.tr > tcp2
+xgraph -color red tcp1 -color blue tcp2
+=============================================================================================================
+=============================================================================================================
+=============================================================================================================
