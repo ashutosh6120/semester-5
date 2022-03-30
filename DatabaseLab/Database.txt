@@ -1,0 +1,1266 @@
+//LIBRARY  DATABASE
+
+
+CREATE TABLE PUBLISHER(
+	NAME VARCHAR(20) PRIMARY KEY,
+	PHONE VARCHAR(10),
+	ADDRESS VARCHAR(10)
+);
+
+
+DESC PUBLISHER;
+
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| NAME    | varchar(20) | NO   | PRI | NULL    |       |
+| PHONE   | varchar(10) | YES  |     | NULL    |       |
+| ADDRESS | varchar(10) | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+
+
+CREATE TABLE BOOK(
+	B_ID NUMERIC PRIMARY KEY,
+	TITLE VARCHAR(20),
+	PUB_YEAR NUMERIC,
+	PUB_NAME VARCHAR(20) REFERENCES PUBLISHER(NAME) ON DELETE CASCADE
+);
+
+DESC BOOK;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| B_ID     | decimal(10,0) | NO   | PRI | NULL    |       |
+| TITLE    | varchar(20)   | YES  |     | NULL    |       |
+| PUB_YEAR | decimal(10,0) | YES  |     | NULL    |       |
+| PUB_NAME | varchar(20)   | YES  |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+
+
+CREATE TABLE BOOK_AUTHORS(
+	AUTHOR_NAME VARCHAR(20),
+	B_ID NUMERIC REFERENCES BOOK(B_ID) ON DELETE CASCADE,
+	PRIMARY KEY(B_ID)
+);
+
+DESC BOOK_AUTHORS;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| AUTHOR_NAME | varchar(20)   | YES  |     | NULL    |       |
+| B_ID        | decimal(10,0) | NO   | PRI | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+
+
+CREATE TABLE LIBRARY_BRANCH(
+	BRANCH_ID NUMERIC PRIMARY KEY,
+	BRANCH_NAME VARCHAR(18),
+	ADDRESS VARCHAR(15)
+);
+
+DESC LIBRARY_BRANCH;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| BRANCH_ID   | decimal(10,0) | NO   | PRI | NULL    |       |
+| BRANCH_NAME | varchar(18)   | YES  |     | NULL    |       |
+| ADDRESS     | varchar(15)   | YES  |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+
+
+
+CREATE TABLE BOOK_COPIES(
+	NO_OF_COPIES INT,
+	B_ID NUMERIC REFERENCES BOOK(B_ID) ON DELETE CASCADE,
+	BRANCH_ID NUMERIC REFERENCES LIBRARY_BRANCH(BRANCH_ID) ON DELETE CASCADE,
+	PRIMARY KEY(B_ID,BRANCH_ID)
+);
+
+DESC BOOK_COPIES;
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| NO_OF_COPIES | int(11)       | YES  |     | NULL    |       |
+| B_ID         | decimal(10,0) | NO   | PRI | NULL    |       |
+| BRANCH_ID    | decimal(10,0) | NO   | PRI | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+
+
+
+CREATE TABLE CARD (
+    CARD_NO INTEGER PRIMARY KEY);
+    
+ DESC CARD;
++---------+---------+------+-----+---------+-------+
+| Field   | Type    | Null | Key | Default | Extra |
++---------+---------+------+-----+---------+-------+
+| CARD_NO | int(11) | NO   | PRI | NULL    |       |
++---------+---------+------+-----+---------+-------+
+
+CREATE TABLE BOOKLENDING(
+	DATE_OUT date,
+	DUE_DATE date,
+	B_ID NUMERIC REFERENCES BOOK(B_ID) ON DELETE CASCADE,
+	BRANCH_ID NUMERIC REFERENCES LIBRARY_BRANCH(BRANCH_ID) ON DELETE CASCADE,
+	PRIMARY KEY(B_ID,BRANCH_ID,CARD_NO),
+	CARD_NO NUMERIC
+
+);
+
+DESC BOOKLENDING;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| DATE_OUT  | date          | YES  |     | NULL    |       |
+| DUE_DATE  | date          | YES  |     | NULL    |       |
+| B_ID      | decimal(10,0) | NO   | PRI | NULL    |       |
+| BRANCH_ID | decimal(10,0) | NO   | PRI | NULL    |       |
+| CARD_NO   | decimal(10,0) | NO   | PRI | NULL    |       |
++-----------+---------------+------+-----+---------+-------+
+
+
+INSERT INTO PUBLISHER VALUES('MCGRAW-HILL',9191919191,'BANGALORE');
+INSERT INTO PUBLISHER VALUES('PEARSON',8181818181,'NEWDELHI');
+INSERT INTO PUBLISHER VALUES('RANDOM HOUSE',7171717171,'HYDERABAD');
+INSERT INTO PUBLISHER VALUES('LIVRE',6161616161,'CHENNAI');
+INSERT INTO PUBLISHER VALUES('PLANETA',5151515151,'BANGALORE');
+
+SELECT * FROM PUBLISHER;
+
++--------------+------------+-----------+
+| NAME         | PHONE      | ADDRESS   |
++--------------+------------+-----------+
+| LIVRE        | 6161616161 | CHENNAI   |
+| MCGRAW-HILL  | 9191919191 | BANGALORE |
+| PEARSON      | 8181818181 | NEWDELHI  |
+| PLANETA      | 5151515151 | BANGALORE |
+| RANDOM HOUSE | 7171717171 | HYDERABAD |
++--------------+------------+-----------+
+
+
+INSERT INTO BOOK VALUES(1,'DBMS',2017,'MCGRAW-HILL');
+INSERT INTO BOOK VALUES(2,'ADBMS',2016,'MCGRAW-HILL');
+INSERT INTO BOOK VALUES(3,'CN',2016,'PEARSON');
+INSERT INTO BOOK VALUES(4,'CG',2015,'PLANETA');
+INSERT INTO BOOK VALUES(5,'OS',2016,'PEARSON');
+
+SELECT * FROM BOOK;
+
++------+-------+----------+-------------+
+| B_ID | TITLE | PUB_YEAR | PUB_NAME    |
++------+-------+----------+-------------+
+|    1 | DBMS  |     2017 | MCGRAW-HILL |
+|    2 | ADBMS |     2016 | MCGRAW-HILL |
+|    3 | CN    |     2016 | PEARSON     |
+|    4 | CG    |     2015 | PLANETA     |
+|    5 | OS    |     2016 | PEARSON     |
++------+-------+----------+-------------+
+
+
+INSERT INTO BOOK_AUTHORS VALUES('NAVATHE',1);
+INSERT INTO BOOK_AUTHORS VALUES('NAVATHE',2);
+INSERT INTO BOOK_AUTHORS VALUES('TANENBAUM',3);
+INSERT INTO BOOK_AUTHORS VALUES('EDWARD ANGEL',4);
+INSERT INTO BOOK_AUTHORS VALUES('GALVIN',5);
+
+SELECT * FROM BOOK_AUTHORS;
+
++--------------+------+
+| AUTHOR_NAME  | B_ID |
++--------------+------+
+| NAVATHE      |    1 |
+| NAVATHE      |    2 |
+| TANENBAUM    |    3 |
+| EDWARD ANGEL |    4 |
+| GALVIN       |    5 |
++--------------+------+
+
+INSERT INTO LIBRARY_BRANCH VALUES(10,'RR NAGAR','BANGALORE');
+INSERT INTO LIBRARY_BRANCH VALUES(11,'RNSIT','BANGALORE');
+INSERT INTO LIBRARY_BRANCH VALUES(12,'RAJAJI NAGAR','BANGALORE');
+INSERT INTO LIBRARY_BRANCH VALUES(13,'NITTE','MANGALORE');
+INSERT INTO LIBRARY_BRANCH VALUES(14,'MANIPAL','UDUPI');
+
+SELECT * FROM LIBRARY_BRANCH;
+
++-----------+--------------+-----------+
+| BRANCH_ID | BRANCH_NAME  | ADDRESS   |
++-----------+--------------+-----------+
+|        10 | RR NAGAR     | BANGALORE |
+|        11 | RNSIT        | BANGALORE |
+|        12 | RAJAJI NAGAR | BANGALORE |
+|        13 | NITTE        | MANGALORE |
+|        14 | MANIPAL      | UDUPI     |
++-----------+--------------+-----------+
+
+
+INSERT INTO BOOK_COPIES VALUES(10,1,10);
+INSERT INTO BOOK_COPIES VALUES(5,1,11);
+INSERT INTO BOOK_COPIES VALUES(2,2,12);
+INSERT INTO BOOK_COPIES VALUES(5,2,13);
+INSERT INTO BOOK_COPIES VALUES(7,3,14);
+INSERT INTO BOOK_COPIES VALUES(1,5,10);
+INSERT INTO BOOK_COPIES VALUES(3,4,11);
+
+SELECT * FROM BOOK_COPIES;
+
++--------------+------+-----------+
+| NO_OF_COPIES | B_ID | BRANCH_ID |
++--------------+------+-----------+
+|           10 |    1 |        10 |
+|            5 |    1 |        11 |
+|            2 |    2 |        12 |
+|            5 |    2 |        13 |
+|            7 |    3 |        14 |
+|            3 |    4 |        11 |
+|            1 |    5 |        10 |
++--------------+------+-----------+
+
+
+INSERT INTO BOOKLENDING VALUES('2017-01-01','2017-06-01',1,10,101);
+INSERT INTO BOOKLENDING VALUES('2017-01-11','2017-03-11',3,14,101);
+INSERT INTO BOOKLENDING VALUES('2017-02-21','2017-04-21',2,13,101);
+INSERT INTO BOOKLENDING VALUES('2017-03-15','2017-07-15',4,11,101);
+INSERT INTO BOOKLENDING VALUES('2017-04-12','2017-05-12',1,11,104);
+
+SELECT * FROM BOOKLENDING;
+
++------------+------------+------+-----------+---------+
+| DATE_OUT   | DUE_DATE   | B_ID | BRANCH_ID | CARD_NO |
++------------+------------+------+-----------+---------+
+| 2017-01-01 | 2017-06-01 |    1 |        10 |     101 |
+| 2017-04-12 | 2017-05-12 |    1 |        11 |     104 |
+| 2017-02-21 | 2017-04-21 |    2 |        13 |     101 |
+| 2017-01-11 | 2017-03-11 |    3 |        14 |     101 |
+| 2017-03-15 | 2017-07-15 |    4 |        11 |     101 |
++------------+------------+------+-----------+---------+
+
+
+
+// QUERIES
+
+1) 
+SELECT B.B_ID, B.TITLE, B.PUB_NAME, A.AUTHOR_NAME,C.NO_OF_COPIES,L.BRANCH_ID
+FROM BOOK B, BOOK_AUTHORS A, BOOK_COPIES C,LIBRARY_BRANCH L
+WHERE B.B_ID=A.B_ID
+AND B.B_ID=C.B_ID
+AND L.BRANCH_ID=C.BRANCH_ID;
+
++------+-------+-------------+--------------+--------------+-----------+
+| B_ID | TITLE | PUB_NAME    | AUTHOR_NAME  | NO_OF_COPIES | BRANCH_ID |
++------+-------+-------------+--------------+--------------+-----------+
+|    1 | DBMS  | MCGRAW-HILL | NAVATHE      |           10 |        10 |
+|    1 | DBMS  | MCGRAW-HILL | NAVATHE      |            5 |        11 |
+|    2 | ADBMS | MCGRAW-HILL | NAVATHE      |            2 |        12 |
+|    2 | ADBMS | MCGRAW-HILL | NAVATHE      |            5 |        13 |
+|    3 | CN    | PEARSON     | TANENBAUM    |            7 |        14 |
+|    4 | CG    | PLANETA     | EDWARD ANGEL |            3 |        11 |
+|    5 | OS    | PEARSON     | GALVIN       |            1 |        10 |
++------+-------+-------------+--------------+--------------+-----------+
+
+
+2)
+SELECT CARD_NO
+FROM BOOKLENDING
+WHERE DATE_OUT BETWEEN '2017-01-01' AND '2017-06-01'
+GROUP BY CARD_NO
+HAVING COUNT(*)> 3;
+
++---------+
+| CARD_NO |
++---------+
+|     101 |
++---------+
+
+
+3)
+DELETE FROM BOOK
+WHERE B_ID = 3;
+SELECT*FROM BOOK;
+
++------+-------+----------+-------------+
+| B_ID | TITLE | PUB_YEAR | PUB_NAME    |
++------+-------+----------+-------------+
+|    1 | DBMS  |     2017 | MCGRAW-HILL |
+|    2 | ADBMS |     2016 | MCGRAW-HILL |
+|    4 | CG    |     2015 | PLANETA     |
+|    5 | OS    |     2016 | PEARSON     |
++------+-------+----------+-------------+
+
+
+4)
+CREATE VIEW VPUBLICATION AS
+SELECT PUB_YEAR
+FROM BOOK;
+SELECT*FROM VPUBLICATION;
+
++----------+
+| PUB_YEAR |
++----------+
+|     2017 |
+|     2016 |
+|     2015 |
+|     2016 |
++----------+
+
+
+5)
+CREATE VIEW VBOOKS AS
+SELECT B.B_ID, B.TITLE, C.NO_OF_COPIES
+FROM
+BOOK B, BOOK_COPIES C, LIBRARY_BRANCH L
+WHERE B.B_ID=C.B_ID
+AND C.BRANCH_ID=L.BRANCH_ID;
+SELECT*from VBOOKS;
+
+
+
++------+-------+--------------+
+| B_ID | TITLE | NO_OF_COPIES |
++------+-------+--------------+
+|    1 | DBMS  |           10 |
+|    1 | DBMS  |            5 |
+|    2 | ADBMS |            2 |
+|    2 | ADBMS |            5 |
+|    4 | CG    |            3 |
+|    5 | OS    |            1 |
++------+-------+--------------+
+
+
+
+
+
+
+
+
+===================================================================================================
+===================================================================================================
+===================================================================================================
+
+
+//ORDER DATABASE
+CREATE TABLE SALESMAN(
+    SALESMAN_ID INT,
+    NAME VARCHAR(20),
+    CITY VARCHAR(20),
+    COMMISSION VARCHAR(20),
+    PRIMARY KEY (SALESMAN_ID)
+);
+
+
+
+DESC SALESMAN;
+
+
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| SALESMAN_ID | int(11)     | NO   | PRI | NULL    |       |
+| NAME        | varchar(20) | YES  |     | NULL    |       |
+| CITY        | varchar(20) | YES  |     | NULL    |       |
+| COMMISSION  | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+
+
+
+CREATE TABLE CUSTOMER(
+    CUSTOMER_ID INT,
+    CUST_NAME VARCHAR(20),
+    CITY VARCHAR(20),
+    GRADE INT(3),
+    PRIMARY KEY (CUSTOMER_ID),
+    SALESMAN_ID INT REFERENCES SALESMAN(SALESMAN_ID) ON DELETE SET NULL);
+
+
+
+DESC CUSTOMER;
+
+
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| CUSTOMER_ID | int(11)     | NO   | PRI | NULL    |       |
+| CUST_NAME   | varchar(20) | YES  |     | NULL    |       |
+| CITY        | varchar(20) | YES  |     | NULL    |       |
+| GRADE       | int(3)      | YES  |     | NULL    |       |
+| SALESMAN_ID | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+
+
+
+CREATE TABLE ORDERS(
+    ORD_NO INT(5),
+    PURCHASE_AMT NUMERIC(10,2),
+    ORD_DATE DATE,
+    PRIMARY KEY (ORD_NO),
+    CUSTOMER_ID INT REFERENCES CUSTOMER(CUSTOMER_ID) ON DELETE CASCADE,
+    SALESMAN_ID INT REFERENCES SALESMAN(SALESMAN_ID) ON DELETE CASCADE);
+
+
+DESC ORDERS;
+
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| ORD_NO       | int(5)        | NO   | PRI | NULL    |       |
+| PURCHASE_AMT | decimal(10,2) | YES  |     | NULL    |       |
+| ORD_DATE     | date          | YES  |     | NULL    |       |
+| CUSTOMER_ID  | int(11)       | YES  |     | NULL    |       |
+| SALESMAN_ID  | int(11)       | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+
+
+
+
+//INSERTION
+
+INSERT INTO SALESMAN VALUES(1000,'JOHN','BANGALORE','25%');
+INSERT INTO SALESMAN VALUES(2000,'RAVI','BANGALORE','20%');
+INSERT INTO SALESMAN VALUES(3000,'KUMAR','MYSORE','15%');
+INSERT INTO SALESMAN VALUES(4000,'SMITH','DELHI','30%');
+INSERT INTO SALESMAN VALUES(5000,'HARSHA','HYDERABAD','15%');
+
+
+SELECT * FROM SALESMAN;
+
++-------------+--------+-----------+------------+
+| SALESMAN_ID | NAME   | CITY      | COMMISSION |
++-------------+--------+-----------+------------+
+|        1000 | JOHN   | BANGALORE | 25%        |
+|        2000 | RAVI   | BANGALORE | 20%        |
+|        3000 | KUMAR  | MYSORE    | 15%        |
+|        4000 | SMITH  | DELHI     | 30%        |
+|        5000 | HARSHA | HYDERABAD | 15%        |
++-------------+--------+-----------+------------+
+
+
+
+
+INSERT INTO CUSTOMER VALUES(10,'PREETHI','BANGALORE',100,1000);
+INSERT INTO CUSTOMER VALUES(11,'VIVEK','MANGALORE',300,1000);
+INSERT INTO CUSTOMER VALUES(12,'BHASKAR','CHENNAI',400,2000);
+INSERT INTO CUSTOMER VALUES(13,'CHETHAN','BANGALORE',200,2000);
+INSERT INTO CUSTOMER VALUES(14,'MAMATHA','BANGALORE',400,3000);
+
+
+
++-------------+-----------+-----------+-------+-------------+
+| CUSTOMER_ID | CUST_NAME | CITY      | GRADE | SALESMAN_ID |
++-------------+-----------+-----------+-------+-------------+
+|          10 | PREETHI   | BANGALORE |   100 |        1000 |
+|          11 | VIVEK     | MANGALORE |   300 |        1000 |
+|          12 | BHASKAR   | CHENNAI   |   400 |        2000 |
+|          13 | CHETHAN   | BANGALORE |   200 |        2000 |
+|          14 | MAMATHA   | BANGALORE |   400 |        3000 |
++-------------+-----------+-----------+-------+-------------+
+
+
+
+
+INSERT INTO ORDERS VALUES (50, 5000, '2017-05-04', 10, 1000);
+INSERT INTO ORDERS VALUES (51, 450, '2017-01-20', 10, 2000);
+INSERT INTO ORDERS VALUES (52, 1000, '2017-02-24', 13, 2000);
+INSERT INTO ORDERS VALUES (53, 3500, '2017-04-13', 14, 3000);
+INSERT INTO ORDERS VALUES (54, 550, '2017-03-09', 12, 2000);
+
+
+
++--------+--------------+------------+-------------+-------------+
+| ORD_NO | PURCHASE_AMT | ORD_DATE   | CUSTOMER_ID | SALESMAN_ID |
++--------+--------------+------------+-------------+-------------+
+|     50 |      5000.00 | 2017-05-04 |          10 |        1000 |
+|     51 |       450.00 | 2017-01-20 |          10 |        2000 |
+|     52 |      1000.00 | 2017-02-24 |          13 |        2000 |
+|     53 |      3500.00 | 2017-04-13 |          14 |        3000 |
+|     54 |       550.00 | 2017-03-09 |          12 |        2000 |
++--------+--------------+------------+-------------+-------------+
+
+
+
+
+
+//QUERIES
+
+1)
+SELECT GRADE,COUNT(DISTINCT CUSTOMER_ID)
+FROM CUSTOMER
+GROUP BY GRADE
+HAVING GRADE > (SELECT AVG(GRADE)
+FROM CUSTOMER
+WHERE CITY='BANGALORE');
+
+
++-------+-----------------------------+
+| GRADE | COUNT(DISTINCT CUSTOMER_ID) |
++-------+-----------------------------+
+|   300 |                           1 |
+|   400 |                           2 |
++-------+-----------------------------+
+
+
+
+2)
+SELECT SALESMAN_ID,NAME
+FROM SALESMAN A
+WHERE 1 < (SELECT COUNT(*)
+FROM CUSTOMER
+WHERE SALESMAN_ID=A.SALESMAN_ID);
+
++-------------+------+
+| SALESMAN_ID | NAME |
++-------------+------+
+|        1000 | JOHN |
+|        2000 | RAVI |
++-------------+------+
+
+
+
+3)
+SELECT SALESMAN.SALESMAN_ID,NAME,CUST_NAME,COMMISSION
+FROM SALESMAN,CUSTOMER
+WHERE SALESMAN.CITY=CUSTOMER.CITY
+UNION
+SELECT SALESMAN_ID,NAME,'NO MATCH',COMMISSION
+FROM SALESMAN
+WHERE NOT CITY = ANY
+(SELECT CITY
+FROM CUSTOMER)
+ORDER BY 2 DESC;
+
+
+
++-------------+--------+-----------+------------+
+| SALESMAN_ID | NAME   | CUST_NAME | COMMISSION |
++-------------+--------+-----------+------------+
+|        4000 | SMITH  | NO MATCH  | 30%        |
+|        2000 | RAVI   | CHETHAN   | 20%        |
+|        2000 | RAVI   | PREETHI   | 20%        |
+|        2000 | RAVI   | MAMATHA   | 20%        |
+|        3000 | KUMAR  | NO MATCH  | 15%        |
+|        1000 | JOHN   | PREETHI   | 25%        |
+|        1000 | JOHN   | MAMATHA   | 25%        |
+|        1000 | JOHN   | CHETHAN   | 25%        |
+|        5000 | HARSHA | NO MATCH  | 15%        |
++-------------+--------+-----------+------------+
+
+
+
+
+
+4)
+CREATE VIEW ELITSALESMAN AS
+SELECT B.ORD_DATE,A.SALESMAN_ID,A.NAME
+FROM SALESMAN A,ORDERS B
+WHERE A.SALESMAN_ID=B.SALESMAN_ID
+AND B.PURCHASE_AMT=(SELECT MAX(PURCHASE_AMT)
+FROM ORDERS C
+WHERE C.ORD_DATE=B.ORD_DATE);
+
+
+
+SELECT * FROM ELITSALESMAN;
+
+
+
++------------+-------------+-------+
+| ORD_DATE   | SALESMAN_ID | NAME  |
++------------+-------------+-------+
+| 2017-05-04 |        1000 | JOHN  |
+| 2017-01-20 |        2000 | RAVI  |
+| 2017-02-24 |        2000 | RAVI  |
+| 2017-04-13 |        3000 | KUMAR |
+| 2017-03-09 |        2000 | RAVI  |
++------------+-------------+-------+
+
+
+
+5)
+DELETE FROM SALESMAN
+WHERE SALESMAN_ID=1000;
+
+
+SELECT * FROM SALESMAN;
+
+
+
++-------------+--------+-----------+------------+
+| SALESMAN_ID | NAME   | CITY      | COMMISSION |
++-------------+--------+-----------+------------+
+|        2000 | RAVI   | BANGALORE | 20%        |
+|        3000 | KUMAR  | MYSORE    | 15%        |
+|        4000 | SMITH  | DELHI     | 30%        |
+|        5000 | HARSHA | HYDERABAD | 15%        |
++-------------+--------+-----------+------------+
+
+
+
+===================================================================================================
+===================================================================================================
+===================================================================================================
+
+
+
+//MOVIE DATABASE
+
+//CREATION
+CREATE TABLE ACTOR(
+ACT_ID INTEGER(3),
+ACT_NAME VARCHAR(20),
+ACT_GENDER CHAR(1),
+PRIMNAY KEY(ACT_ID));
+
+
+DESC ACTOR;
+
+CREATE TABLE DIRECTOR(
+DIR_ID INTEGER(3),
+DIR_NAME VARCHAR(20),
+DIR_PHONE INTEGER(11),
+PRIMARY KEY(DIR_ID));
+
+DESC DIRECTOR;
+
+
+CREATE TABLE MOVIES(
+MOV_ID INTEGER(4),
+MOV_TITLE VARCHAR(25),
+MOV_YEAR INTEGER(4),
+MOV_LANG VARCHAR(12),
+DIR_ID INTEGER(3),
+PRIMARY KEY(MOV_ID),
+FOREIGN KEY(DIR_ID) REFERENCES DIRECTOR(DIR_ID));
+
+DESC MOVIES;
+
+
+
+CREATE TABLE MOVIECAST(
+ACT_ID INTEGER(3),
+MOV_ID INTEGER(4),
+ROLE VARCHAR(10),
+PRIMARY KEY(ACT_ID,MOV_ID),
+FOREIGN KEY(ACT_ID) REFERENCES ACTOR(ACT_ID),
+FOREIGN KEY(MOV_ID) REFERENCES MOVIES(MOV_ID));
+
+DESC MOVIECAST;
+
+CREATE TABLE RATING(
+MOV_ID INTEGER(3),
+REV_STARS VARCHAR(25),
+PRIMARY KEY(MOV_ID),
+FOREIGN KEY(MOV_ID) REFERENCES MOVIES(MOV_ID));
+
+
+DESC RATING;
+
+
+
+//INSERTION INTO TABLE
+INSERT INTO ACTOR VALUES(301,'ANUSHKA','F');
+INSERT INTO ACTOR VALUES(302,'PRABHAS','M');
+INSERT INTO ACTOR VALUES(303,'PUNITH','M');
+INSERT INTO ACTOR VALUES(304,'SUDEEP','M');
+
+SELECT * FROM ACTOR;
+
+INSERT INTO DIRECTOR VALUES(60,'RAJAMOULI',9191919);
+INSERT INTO DIRECTOR VALUES(61,'HITCHCOCK',8181818);
+INSERT INTO DIRECTOR VALUES(62,'FARAN',71717171);
+INSERT INTO DIRECTOR VALUES(63,'STEVEN SPIELBERG',61616161);
+
+SELECT * FROM DIRECTOR;
+
+
+INSERT INTO MOVIES VALUES(1001,'BAHUBALI-2',2017,'TELUGU',60);
+INSERT INTO MOVIES VALUES(1002,'BAHUBALI-1',2015,'TELUGU',60);
+INSERT INTO MOVIES VALUES(1003,'AKASH',2008,'KANNADA',61);
+INSERT INTO MOVIES VALUES(1004,'WAR HORSE',2011,'ENGLISH',63);
+
+
+SELECT * FROM MOVIES;
+
+
+INSERT INTO MOVIECAST VALUES(301,1002,'HEROINE');
+INSERT INTO MOVIECAST VALUES(301,1001,'HEROINE');
+INSERT INTO MOVIECAST VALUES(303,1003,'HERO');
+INSERT INTO MOVIECAST VALUES(303,1002,'GUEST');
+INSERT INTO MOVIECAST VALUES(304,1004,'HERO');
+
+
+SELECT * FROM MOVIECAST;
+
+
+INSERT INTO RATING VALUES(1001,4);
+INSERT INTO RATING VALUES(1002,2);
+INSERT INTO RATING VALUES(1003,5);
+INSERT INTO RATING VALUES(1004,4);
+
+
+SELECT * FROM RATING;
+
+
+--------------------------------------------------------------------------------
+
+QUERIES
+--------------------------------------------------------------------------------
+
+/* QUERY 1 */
+
+SELECT MOV_TITLE
+FROM MOVIES
+WHERE DIR_ID IN (SELECT DIR_ID FROM DIRECTOR WHERE DIR_NAME='HITCHCOCK');
+
+
+
+
+/* QUERY 2 */
+
+SELECT MOV_TITLE
+FROM MOVIES M,MOVIECAST MC
+WHERE M.MOV_ID=MC.MOV_ID AND MC.ACT_ID IN(SELECT
+ACT_ID FROM MOVIECAST GROUP BY ACT_ID HAVING
+COUNT(ACT_ID)>=2)
+GROUP BY M.MOV_TITLE HAVING COUNT(8)>=1; 
+
+
+
+
+
+
+
+
+/* QUERY 3 */
+SELECT ACT_NAME,MOV_TITLE,MOV_YEAR
+FROM ACTOR A
+JOUIN MOVIECAST C
+ON A.ACT_ID=C.ACT_ID
+JOIN MOVIES M
+ON C.MOV_ID=M.MOV_ID
+WHERE M.MOV_YEAR NOT BETWEEN 2000 AND 2015;
+
+
+
+
+/* QUERY 4 */
+SELECT MOV_TITLE,MAX(REV_STARS)
+FROM MOVIES
+INNER JOIN RATING USING(MOV_ID)
+GROUP BY MOV_TITLE
+HAVING MAX(REV_STARS)>0
+ORDER BY MOV_TITLE;
+
+
+
+
+/* QUERY 5 */
+UPDATE RATING
+SET REV_STARS=5
+WHERE MOV_ID IN (SELECT MOV_ID FROM MOVIES
+WHERE DIR_ID IN(SELECT DIR_ID
+FROM DIRECTOR
+WHERE DIR_NAME='STEVEN SPIELBERG'));
+
+
+
+SELECT * FROM RATING;
+
+
++--------+-----------+
+| MOV_ID | REV_STARS |
++--------+-----------+
+|   1001 | 4         |
+|   1002 | 2         |
+|   1003 | 5         |
+|   1004 | 5         |
++--------+-----------+
+
+
+
+===================================================================================================
+===================================================================================================
+===================================================================================================
+
+
+
+//COLLEGE DATABASE
+
+CREATE TABLE STUDENT(
+    USN VARCHAR(50) PRIMARY KEY,
+    SNAME VARCHAR(50),
+    ADDRESS VARCHAR(50),
+    PHONE BIGINT(10),
+    GENDER CHAR(1)
+);
+
+DESC STUDENT;
+
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| USN     | varchar(50) | NO   | PRI | NULL    |       |
+| SNAME   | varchar(50) | YES  |     | NULL    |       |
+| ADDRESS | varchar(50) | YES  |     | NULL    |       |
+| PHONE   | bigint(10)  | YES  |     | NULL    |       |
+| GENDER  | char(1)     | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+
+
+
+
+
+CREATE TABLE SEMSEC(
+    SSID VARCHAR(50) PRIMARY KEY,
+    SEM NUMERIC(10),
+    SEC CHAR(1)
+);
+
+
+DESC SEMSEC;
++-------+---------------+------+-----+---------+-------+
+| Field | Type          | Null | Key | Default | Extra |
++-------+---------------+------+-----+---------+-------+
+| SSID  | varchar(50)   | NO   | PRI | NULL    |       |
+| SEM   | decimal(10,0) | YES  |     | NULL    |       |
+| SEC   | char(1)       | YES  |     | NULL    |       |
++-------+---------------+------+-----+---------+-------+
+
+
+
+
+
+CREATE TABLE CLASS(
+    USN VARCHAR(50),
+    SSID VARCHAR(50),
+    PRIMARY KEY (USN,SSID),
+    FOREIGN KEY (USN) REFERENCES STUDENT(USN),
+    FOREIGN KEY (SSID) REFERENCES SEMSEC(SSID)
+);
+
+
+DESC CLASS;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| USN   | varchar(50) | NO   | PRI | NULL    |       |
+| SSID  | varchar(50) | NO   | PRI | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+
+
+
+
+CREATE TABLE SUBJECT(
+    SUBCODE VARCHAR(50),
+    TITLE VARCHAR(50),
+    SEM INT(10),
+    CREDITS INT(2),
+    PRIMARY KEY (SUBCODE) 
+);
+
+
+DESC SUBJECT;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| SUBCODE | varchar(50) | NO   | PRI | NULL    |       |
+| TITLE   | varchar(50) | YES  |     | NULL    |       |
+| SEM     | int(10)     | YES  |     | NULL    |       |
+| CREDITS | int(2)      | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+
+
+
+
+CREATE TABLE IAMARKS(
+    USN VARCHAR(50),
+    SUBCODE VARCHAR(50),
+    SSID VARCHAR(50),
+    TEST1 INT(3),
+    TEST2 INT(3),
+    TEST3 INT(3),
+    FINALIA INT(3),
+    PRIMARY KEY (USN,SSID,SUBCODE),
+    FOREIGN KEY (USN) REFERENCES STUDENT(USN),
+    FOREIGN KEY (SUBCODE) REFERENCES SUBJECT(SUBCODE),
+    FOREIGN KEY (SSID) REFERENCES SEMSEC(SSID)
+);
+
+
+DESC IAMARKS;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| USN     | varchar(50) | NO   | PRI | NULL    |       |
+| SUBCODE | varchar(50) | NO   | PRI | NULL    |       |
+| SSID    | varchar(50) | NO   | PRI | NULL    |       |
+| TEST1   | int(3)      | YES  |     | NULL    |       |
+| TEST2   | int(3)      | YES  |     | NULL    |       |
+| TEST3   | int(3)      | YES  |     | NULL    |       |
+| FINALIA | int(3)      | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+
+
+
+//INSERTION OF VALUES
+INSERT INTO STUDENT VALUES('1RN13CS020','AKSHAY','BELGAVI',8877881122,'M'),
+ ('1RN13CS062','SANDHYA','BENGALURU',7722829912,'F'),
+ ('1RN13CS091','TEESHA','BENGALURU',7712312312,'F'),
+ ('1RN13CS066','SUPRIYA','MANGALURU',8877881122,'F'),
+ ('1RN14CS010','ABHAY','BENGALURU',9900211201,'M'),
+ ('1RN14CS032','BHASKAR','BENGALURU',9923211099,'M'),
+ ('1RN14CS025','ASMI','BENGALURU',7894737377,'F'),
+ ('1RN15CS011','AJAY','TUMKUR', 9845091341,'M'),
+ ('1RN15CS029','CHITRA','DAVANGERE',7696772121,'F'),
+ ('1RN15CS045','JEEVA','BELLARY',9944850121,'M'),
+ ('1RN15CS091','SANTOSH','MANGALURU',8812332201,'M'),
+ ('1RN16CS045','ISMAIL','KALBURGI',9900232201,'M'),
+ ('1RN16CS088','SAMEERA','SHIMOGA',9905542212,'F'),
+ ('1RN16CS122','VINAYAKA','CHIKAMAGALUR',8800880011,'M');
+ 
+ 
+ SELECT * FROM STUDENT;
++------------+----------+--------------+------------+--------+
+| USN        | SNAME    | ADDRESS      | PHONE      | GENDER |
++------------+----------+--------------+------------+--------+
+| 1RN13CS020 | AKSHAY   | BELGAVI      | 8877881122 | M      |
+| 1RN13CS062 | SANDHYA  | BENGALURU    | 7722829912 | F      |
+| 1RN13CS066 | SUPRIYA  | MANGALURU    | 8877881122 | F      |
+| 1RN13CS091 | TEESHA   | BENGALURU    | 7712312312 | F      |
+| 1RN14CS010 | ABHAY    | BENGALURU    | 9900211201 | M      |
+| 1RN14CS025 | ASMI     | BENGALURU    | 7894737377 | F      |
+| 1RN14CS032 | BHASKAR  | BENGALURU    | 9923211099 | M      |
+| 1RN15CS011 | AJAY     | TUMKUR       | 9845091341 | M      |
+| 1RN15CS029 | CHITRA   | DAVANGERE    | 7696772121 | F      |
+| 1RN15CS045 | JEEVA    | BELLARY      | 9944850121 | M      |
+| 1RN15CS091 | SANTOSH  | MANGALURU    | 8812332201 | M      |
+| 1RN16CS045 | ISMAIL   | KALBURGI     | 9900232201 | M      |
+| 1RN16CS088 | SAMEERA  | SHIMOGA      | 9905542212 | F      |
+| 1RN16CS122 | VINAYAKA | CHIKAMAGALUR | 8800880011 | M      |
++------------+----------+--------------+------------+--------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--2
+INSERT INTO SEMSEC VALUES ('CSE8A', 8,'A'),
+  ('CSE8B', 8,'B'),
+  ('CSE8C', 8,'C'),
+  ('CSE7A', 7,'A'),
+  ('CSE7B', 7,'B'),
+  ('CSE7C', 7,'C'),
+  ('CSE6A', 6,'A'),
+  ('CSE6B', 6,'B'),
+  ('CSE6C', 6,'C'),
+  ('CSE5A', 5,'A'),
+  ('CSE5B', 5,'B'),
+  ('CSE5C', 5,'C'),
+  ('CSE4A', 4,'A'),
+  ('CSE4B', 4,'B'),
+  ('CSE4C', 4,'C'),
+  ('CSE3A', 3,'A'),
+  ('CSE3B', 3,'B'),
+  ('CSE3C', 3,'C'),
+  ('CSE2A', 2,'A'),
+  ('CSE2B', 2,'B'),
+  ('CSE2C', 2,'C'),
+  ('CSE1A', 1,'A'),
+  ('CSE1B', 1,'B'),
+  ('CSE1C', 1,'C');
+
+
+SELECT * FROM SEMSEC;
++-------+------+------+
+| SSID  | SEM  | SEC  |
++-------+------+------+
+| CSE1A |    1 | A    |
+| CSE1B |    1 | B    |
+| CSE1C |    1 | C    |
+| CSE2A |    2 | A    |
+| CSE2B |    2 | B    |
+| CSE2C |    2 | C    |
+| CSE3A |    3 | A    |
+| CSE3B |    3 | B    |
+| CSE3C |    3 | C    |
+| CSE4A |    4 | A    |
+| CSE4B |    4 | B    |
+| CSE4C |    4 | C    |
+| CSE5A |    5 | A    |
+| CSE5B |    5 | B    |
+| CSE5C |    5 | C    |
+| CSE6A |    6 | A    |
+| CSE6B |    6 | B    |
+| CSE6C |    6 | C    |
+| CSE7A |    7 | A    |
+| CSE7B |    7 | B    |
+| CSE7C |    7 | C    |
+| CSE8A |    8 | A    |
+| CSE8B |    8 | B    |
+| CSE8C |    8 | C    |
++-------+------+------+
+
+
+
+
+
+
+
+--3
+INSERT INTO CLASS VALUES ('1RN13CS020','CSE8A'),
+  ('1RN13CS062','CSE8A'),
+  ('1RN13CS066','CSE8B'),
+  ('1RN13CS091','CSE8C'),
+  ('1RN14CS010','CSE7A'),
+  ('1RN14CS025','CSE7A'),
+  ('1RN14CS032','CSE7A'),
+  ('1RN15CS011','CSE4A'),
+  ('1RN15CS029','CSE4A'),
+  ('1RN15CS045','CSE4B'),
+  ('1RN15CS091','CSE4C'),
+  ('1RN16CS045','CSE3A'),
+  ('1RN16CS088','CSE3B'),
+  ('1RN16CS122','CSE3C');
+
+
+SELECT * FROM CLASS;
++------------+-------+
+| USN        | SSID  |
++------------+-------+
+| 1RN16CS045 | CSE3A |
+| 1RN16CS088 | CSE3B |
+| 1RN16CS122 | CSE3C |
+| 1RN15CS011 | CSE4A |
+| 1RN15CS029 | CSE4A |
+| 1RN15CS045 | CSE4B |
+| 1RN15CS091 | CSE4C |
+| 1RN14CS010 | CSE7A |
+| 1RN14CS025 | CSE7A |
+| 1RN14CS032 | CSE7A |
+| 1RN13CS020 | CSE8A |
+| 1RN13CS062 | CSE8A |
+| 1RN13CS066 | CSE8B |
+| 1RN13CS091 | CSE8C |
++------------+-------+
+
+
+
+
+
+
+--4
+INSERT INTO SUBJECT VALUES ('10CS81','ACA', 8, 4),
+ ('10CS82','SSM', 8, 4),
+ ('10CS83','NM', 8, 4),
+ ('10CS84','CC', 8, 4),
+ ('10CS85','PW', 8, 4),
+ ('10CS71','OOAD', 7, 4),
+ ('10CS72','ECS', 7, 4),
+ ('10CS73','PTW', 7, 4),
+ ('10CS74','DWDM', 7, 4),
+ ('10CS75','JAVA', 7, 4),
+ ('10CS76','SAN', 7, 4),
+ ('15CS51','ME', 5, 4),
+ ('15CS52','CN', 5, 4),
+ ('15CS53','DBMS', 5, 4),
+ ('15CS54','ATC', 5, 4),
+ ('15CS55','JAVA', 5, 3),
+ ('15CS56','AI', 5, 3),
+ ('15CS41','M4', 4, 4),
+ ('15CS42','SE', 4, 4),
+ ('15CS43','DAA', 4, 4),
+ ('15CS44','MPMC', 4, 4),
+ ('15CS45','OOC', 4, 3),
+ ('15CS46','DC', 4, 3),
+ ('15CS31','M3', 3, 4),
+ ('15CS32','ADE', 3, 4),
+ ('15CS33','DSA', 3, 4),
+ ('15CS34','CO', 3, 4),
+ ('15CS35','USP', 3, 3),
+ ('15CS36','DMS', 3, 3);
+ 
+ 
+
+SELECT * FROM SUBJECT;
+
++---------+-------+------+---------+
+| SUBCODE | TITLE | SEM  | CREDITS |
++---------+-------+------+---------+
+| 10CS71  | OOAD  |    7 |       4 |
+| 10CS72  | ECS   |    7 |       4 |
+| 10CS73  | PTW   |    7 |       4 |
+| 10CS74  | DWDM  |    7 |       4 |
+| 10CS75  | JAVA  |    7 |       4 |
+| 10CS76  | SAN   |    7 |       4 |
+| 10CS81  | ACA   |    8 |       4 |
+| 10CS82  | SSM   |    8 |       4 |
+| 10CS83  | NM    |    8 |       4 |
+| 10CS84  | CC    |    8 |       4 |
+| 10CS85  | PW    |    8 |       4 |
+| 15CS31  | M3    |    3 |       4 |
+| 15CS32  | ADE   |    3 |       4 |
+| 15CS33  | DSA   |    3 |       4 |
+| 15CS34  | CO    |    3 |       4 |
+| 15CS35  | USP   |    3 |       3 |
+| 15CS36  | DMS   |    3 |       3 |
+| 15CS41  | M4    |    4 |       4 |
+| 15CS42  | SE    |    4 |       4 |
+| 15CS43  | DAA   |    4 |       4 |
+| 15CS44  | MPMC  |    4 |       4 |
+| 15CS45  | OOC   |    4 |       3 |
+| 15CS46  | DC    |    4 |       3 |
+| 15CS51  | ME    |    5 |       4 |
+| 15CS52  | CN    |    5 |       4 |
+| 15CS53  | DBMS  |    5 |       4 |
+| 15CS54  | ATC   |    5 |       4 |
+| 15CS55  | JAVA  |    5 |       3 |
+| 15CS56  | AI    |    5 |       3 |
++---------+-------+------+---------+
+
+
+
+--5
+INSERT INTO IAMARKS (USN, SUBCODE, SSID, TEST1, TEST2, TEST3) VALUES ('1RN13CS091','10CS81','CSE8C', 15, 16, 18),
+ ('1RN13CS091','10CS82','CSE8C', 12, 19, 14),
+ ('1RN13CS091','10CS83','CSE8C', 19, 15, 20),
+ ('1RN13CS091','10CS84','CSE8C', 20, 16, 19),
+ ('1RN13CS091','10CS85','CSE8C', 15, 15, 12);
+
+SELECT * FROM IAMARKS;
+
++------------+---------+-------+-------+-------+-------+---------+
+| USN        | SUBCODE | SSID  | TEST1 | TEST2 | TEST3 | FINALIA |
++------------+---------+-------+-------+-------+-------+---------+
+| 1RN13CS091 | 10CS81  | CSE8C |    15 |    16 |    18 |    NULL |
+| 1RN13CS091 | 10CS82  | CSE8C |    12 |    19 |    14 |    NULL |
+| 1RN13CS091 | 10CS83  | CSE8C |    19 |    15 |    20 |    NULL |
+| 1RN13CS091 | 10CS84  | CSE8C |    20 |    16 |    19 |    NULL |
+| 1RN13CS091 | 10CS85  | CSE8C |    15 |    15 |    12 |    NULL |
++------------+---------+-------+-------+-------+-------+---------+
+
+
+
+
+
+
+//QUERIES
+
+
+1) 
+SELECT S.*, SS.SEM, SS.SEC
+FROM STUDENT S, SEMSEC SS, CLASS C
+WHERE S.USN = C.USN AND
+SS.SSID = C.SSID AND
+SS.SEM = 4 AND SS.SEC='C';
+
++------------+---------+-----------+------------+--------+------+------+
+| USN        | SNAME   | ADDRESS   | PHONE      | GENDER | SEM  | SEC  |
++------------+---------+-----------+------------+--------+------+------+
+| 1RN15CS091 | SANTOSH | MANGALURU | 8812332201 | M      |    4 | C    |
++------------+---------+-----------+------------+--------+------+------+
+
+
+
+2)
+
+SELECT SS.SEM, SS.SEC, S.GENDER, COUNT(S.GENDER) AS COUNT
+FROM STUDENT S, SEMSEC SS, CLASS C
+WHERE S.USN = C.USN AND
+SS.SSID = C.SSID
+GROUP BY SS.SEM, SS.SEC, S.GENDER
+ORDER BY SEM;
+
++------+------+--------+-------+
+| SEM  | SEC  | GENDER | COUNT |
++------+------+--------+-------+
+|    3 | A    | M      |     1 |
+|    3 | B    | F      |     1 |
+|    3 | C    | M      |     1 |
+|    4 | A    | F      |     1 |
+|    4 | A    | M      |     1 |
+|    4 | B    | M      |     1 |
+|    4 | C    | M      |     1 |
+|    7 | A    | F      |     1 |
+|    7 | A    | M      |     2 |
+|    8 | A    | F      |     1 |
+|    8 | A    | M      |     1 |
+|    8 | B    | F      |     1 |
+|    8 | C    | F      |     1 |
++------+------+--------+-------+
+
+
+3)
+CREATE VIEW  STU_TEST1 AS
+SELECT TEST1, SUBCODE
+FROM IAMARKS
+WHERE USN = '1RN13CS091';
+
++-------+---------+
+| TEST1 | SUBCODE |
++-------+---------+
+|    15 | 10CS81  |
+|    12 | 10CS82  |
+|    19 | 10CS83  |
+|    20 | 10CS84  |
+|    15 | 10CS85  |
++-------+---------+
+
+
+
+4) 
+UPDATE IAMARKS
+SET FINALIA = (CASE
+WHEN GREATEST(TEST1,TEST2) != GREATEST(TEST1,TEST3) THEN 
+GREATEST(TEST1, TEST2) + GREATEST(TEST1, TEST3)
+ELSE
+GREATEST(TEST1,TEST2) + GREATEST(TEST3,TEST2)
+END)/2
+WHERE FINALIA IS NULL;
+
+
+SELECT * FROM IAMARKS;
+
+
+
++------------+---------+-------+-------+-------+-------+---------+
+| USN        | SUBCODE | SSID  | TEST1 | TEST2 | TEST3 | FINALIA |
++------------+---------+-------+-------+-------+-------+---------+
+| 1RN13CS091 | 10CS81  | CSE8C |    15 |    16 |    18 |      17 |
+| 1RN13CS091 | 10CS82  | CSE8C |    12 |    19 |    14 |      17 |
+| 1RN13CS091 | 10CS83  | CSE8C |    19 |    15 |    20 |      20 |
+| 1RN13CS091 | 10CS84  | CSE8C |    20 |    16 |    19 |      20 |
+| 1RN13CS091 | 10CS85  | CSE8C |    15 |    15 |    12 |      15 |
++------------+---------+-------+-------+-------+-------+---------+
+
+
+5) 
+SELECT S.USN,S.SNAME,S.ADDRESS,S.PHONE,S.GENDER,
+(CASE
+WHEN IA.FINALIA BETWEEN 17 AND 20 THEN 'OUTSTANDING'
+WHEN IA.FINALIA BETWEEN 12 AND 16 THEN 'AVERAGE'
+ELSE 'WEAK'
+END) AS CAT
+FROM STUDENT S, SEMSEC SS, IAMARKS IA, SUBJECT SUB
+WHERE S.USN = IA.USN AND
+SS.SSID = IA.SSID AND
+SUB.SUBCODE = IA.SUBCODE AND
+SUB.SEM = 8;
+
+
+
++------------+--------+-----------+------------+--------+-------------+
+| USN        | SNAME  | ADDRESS   | PHONE      | GENDER | CAT         |
++------------+--------+-----------+------------+--------+-------------+
+| 1RN13CS091 | TEESHA | BENGALURU | 7712312312 | F      | OUTSTANDING |
+| 1RN13CS091 | TEESHA | BENGALURU | 7712312312 | F      | OUTSTANDING |
+| 1RN13CS091 | TEESHA | BENGALURU | 7712312312 | F      | OUTSTANDING |
+| 1RN13CS091 | TEESHA | BENGALURU | 7712312312 | F      | OUTSTANDING |
+| 1RN13CS091 | TEESHA | BENGALURU | 7712312312 | F      | AVERAGE     |
++------------+--------+-----------+------------+--------+-------------+
